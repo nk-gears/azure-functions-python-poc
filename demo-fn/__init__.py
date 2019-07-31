@@ -1,7 +1,7 @@
 import logging
 
 import azure.functions as func
-#import pandas as pd
+import pandas as pd
 #ls=["name","age"]
 #df=pd.DataFrame(ls)
 from azure.storage.blob import BlockBlobService
