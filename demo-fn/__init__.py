@@ -8,9 +8,6 @@ from azure.storage.blob import BlockBlobService
 accountey="MkCyzS20s5n8LP5ukutsmNjdnenV6iVaAAJEDXc9xb3xWidAcfCpvhFiovAcdYCOReLkQjSzxb7w7D3W5wXq2Q=="
 accountName="scifunctionapp"
 containerName="democontainer"
-df =  pd.read_csv(pd.compat.StringIO(((BlockBlobService(account_name=accountName,account_key=accountey)).get_blob_to_text(containerName,"creditcard.csv")).content),encoding='utf-8',error_bad_lines=False)
-x=df.head()
-
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
@@ -26,7 +23,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('name')
 
     if name:
-        return func.HttpResponse(f"Hello {name} {x}!")
+        try:
+            df =  pd.read_csv(pd.compat.StringIO(((BlockBlobService(account_name=accountName,account_key=accountey)).get_blob_to_text(containerName,"creditcard.csv")).content),encoding='utf-8',error_bad_lines=False)
+            x=df.head()
+        except Exception as e:
+            return func.HttpResponse(f"Hello  The error is {e}!")
+        else:
+            return func.HttpResponse(f"Hello {x}!")
+
+
     else:
         return func.HttpResponse(
              "Please pass a name on the query string or in the request body",
