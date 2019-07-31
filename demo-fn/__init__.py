@@ -67,15 +67,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('name')
 
     if name:
-        try:
-            from .. SharedCode import StopWatch
-            with StopWatch() as sw:
-                t=("[*] Elapsed: {0:.2f}s".format(sw.elapsed_s))
+        #try:
+            #from .. SharedCode import StopWatch
+            #with StopWatch() as sw:
+               # t=("[*] Elapsed: {0:.2f}s".format(sw.elapsed_s))
                 
-        except Exception as ex:
-            return func.HttpResponse(f"Hello {name} {ex}")
-        else:
-            return func.HttpResponse(f"Hello {name} {t}")
+        #except Exception as ex:
+            #return func.HttpResponse(f"Hello {name} {ex}")
+        #else:
+        return func.HttpResponse(f"Hello {name} ")
     else:
         return func.HttpResponse(
              "Please pass a name on the query string or in the request body",
