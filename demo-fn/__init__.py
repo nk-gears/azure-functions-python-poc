@@ -24,7 +24,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if name:
         try:
-            df =  pd.read_csv(pd.compat.StringIO(((BlockBlobService(account_name=accountName,account_key=accountey)).get_blob_to_text(containerName,"creditcard.csv")).content),encoding='utf-8',error_bad_lines=False)
+            df =  pd.read_csv(pd.compat.StringIO(((BlockBlobService(account_name=accountName,account_key=accountey)).get_blob_to_text(containerName,"demodata.csv")).content),encoding='utf-8',error_bad_lines=False)
             x=df.head()
         except Exception as e:
             return func.HttpResponse(f"Hello  The error is {e}!")
