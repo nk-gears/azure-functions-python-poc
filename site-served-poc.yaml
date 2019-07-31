@@ -3,7 +3,7 @@ resources:
 queue:
   name: Hosted Ubuntu 1604
 variables:
-  FunctionFolder: './'
+  FunctionFolder: '.'
   FunctionAppName: 'scifunctionapp'
 steps:
 - task: DotNetCoreInstaller@0
