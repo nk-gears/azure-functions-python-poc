@@ -45,7 +45,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
 
 
-from modules import StopWatch
+
 import logging
 
 import azure.functions as func
@@ -67,8 +67,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('name')
 
     if name:
-        with StopWatch() as sw:
-            t=("[*] Elapsed: {0:.2f}s".format(sw.elapsed_s))
+        try:
+            from .. SharedCode import StopWatch
+            with StopWatch() as sw:
+                t=("[*] Elapsed: {0:.2f}s".format(sw.elapsed_s))
+                
+        except Exception as ex:
+            return func.HttpResponse(f"Hello {name} {ex}")
+        else:
             return func.HttpResponse(f"Hello {name} {t}")
     else:
         return func.HttpResponse(
