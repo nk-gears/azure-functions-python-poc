@@ -1,0 +1,63 @@
+resources:
+- repo: self
+queue:
+  name: Hosted Ubuntu 1604
+variables:
+  FunctionFolder: './'
+  FunctionAppName: ''
+steps:
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core sdk 2.1.502'
+  inputs:
+    version: 2.1.502
+
+
+- task: AzureCLI@1
+  displayName: 'Azure CLI - build and deploy Python Function'
+  inputs:
+    azureSubscription: '**your azure subscription connection**'
+
+    scriptLocation: inlineScript
+
+    inlineScript: |
+     # Functions source
+     wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+     sudo dpkg -i packages-microsoft-prod.deb
+     
+     # Python 3.6 package for Ubuntu 16.04
+     sudo add-apt-repository ppa:deadsnakes/ppa
+     
+     # Update packages list
+     sudo apt-get update
+     
+     # Install Azure Functions Core Tools
+     sudo apt-get install azure-functions-core-tools
+     
+     # install Python3 and Virtual Environment support
+     sudo apt-get install python3.6
+     sudo apt-get install python3.6-venv
+     
+     # init Python venv 
+     python3.6 -m venv .env
+     source .env/bin/activate
+     
+     # Backup our source requirements.txt file
+     mv $(FunctionFolder)/requirements.txt  $(FunctionFolder)/requirements.orig.txt
+     
+     # Initialise Function environment locally so it sets runtime to Python
+     # Note: this also overwrites requirements.txt
+     func init $(FunctionFolder) --worker-runtime python
+     
+     # Delete the newly created requirements.txt file
+     rm $(FunctionFolder)/requirements.txt
+     
+     # Restore our original requirements.txt file
+     mv $(FunctionFolder)/requirements.orig.txt $(FunctionFolder)/requirements.txt
+     
+     # now install Functions extensions for Function
+     cd $(FunctionFolder)
+     func extensions install
+     
+     # deploy (uses Docker) - FunctionAppName should be an existing Linux Consumption App Plan
+     func azure functionapp publish $(FunctionAppName) --build-native-deps
+    addSpnToEnvironment: true
