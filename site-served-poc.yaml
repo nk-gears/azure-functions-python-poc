@@ -4,7 +4,7 @@ queue:
   name: Hosted Ubuntu 1604
 variables:
   FunctionFolder: './'
-  FunctionAppName: ''
+  FunctionAppName: 'scifunctionapp'
 steps:
 - task: DotNetCoreInstaller@0
   displayName: 'Use .NET Core sdk 2.1.502'
