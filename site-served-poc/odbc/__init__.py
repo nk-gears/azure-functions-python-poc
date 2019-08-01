@@ -6,12 +6,10 @@ import json
 class ODBC:
 
     # Establish the DB Connection
-    def createDBConnector(self, dbType, username, password, hostName, portNo, dbName):
+    def createDBConnector(self, resourceList, resourceName):
         try:
-            dbConnectionString = self.getDBConnectionString(dbType)
-            dbConnectionString = dbConnectionString + username + \
-                ":" + password + "@"+hostName + ":" + portNo+"/"+dbName
-            print(dbConnectionString)
+            dbConnectionString = self.generateDBConnectionString(
+                resourceList, resourceName)
             engine = db.create_engine(
                 dbConnectionString, encoding='utf-8', echo=False)
             return engine
@@ -21,37 +19,35 @@ class ODBC:
             pass
 
     # Read the given csv file and push it to the database
-    def pushToTarget(self, dbType, username, password, hostName, portNo, dbName, tableName, fileLocation):
+    def pushToTarget(self, resourceList, resourceName, tableName, dateframe):
         try:
-            engine = self.createDBConnector(
-                dbType, username, password, hostName, portNo, dbName)
-            df = pd.read_csv(fileLocation)
+            engine = self.createDBConnector(resourceList, resourceName)
+            df = pd.read_csv(dateframe)
             self.getTableMetadata(engine, tableName, df)
             df.to_sql(name=tableName, if_exists='append',
-                    con=engine, index=False)
+                      con=engine, index=False)
         except Exception as e:
             # log the exception
             # raise exception.StopETLException
-            pass        
+            pass
         finally:
             engine.dispose()
 
     # Read the database table and write to the csv file
-    def readFromSource(self, dbType, username, password, hostName, portNo, dbName, tableName, fileTargetLocation):
+    def readFromSource(self, resourceList, resourceName, tableName, fileTargetLocation):
         try:
-            engine = self.createDBConnector(
-            dbType, username, password, hostName, portNo, dbName)
+            engine = self.createDBConnector(resourceList, resourceName)
             connection = engine.connect()
             metadata = db.MetaData(engine, reflect=True)
             table = db.Table(tableName, metadata, autoload=True,
-                            autoload_with=engine)
+                             autoload_with=engine)
             query = db.select([table])
             resultSet = connection.execute(query).fetchall()
             df = pd.DataFrame(resultSet)
             print(df.head(10))
             df = df.head(50)
             df.to_csv(fileTargetLocation, index=False,
-                    encoding='utf-8', header=False)
+                      encoding='utf-8', header=False)
             return df
         except Exception as e:
             # log the exception
@@ -69,7 +65,7 @@ class ODBC:
                 print("Table is not found")
                 sys.exit(0)
             table = db.Table(tableName, metadata, autoload=True,
-                            autoload_with=engine)
+                             autoload_with=engine)
             # Check for the table column metadata
             for columnName in table.columns.keys():
                 if not columnName in df.columns:
@@ -82,7 +78,7 @@ class ODBC:
         # Need to check table column data type
 
     # Get the DB dialect uri based on the db providers
-    def getDBConnectionString(self, dbEngineProvider):
+    def getDBDialectString(self, dbEngineProvider):
         try:
             with open('./site-served-poc/odbc/odbctypes.json') as odbcTypes:
                 data = json.load(odbcTypes)
@@ -92,6 +88,22 @@ class ODBC:
             # raise exception.StopETLException
             pass
 
+    def generateDBConnectionString(self, resourceDetailsList, resourceName):
+        # On live, resource details list will be passed as parameter to the function. For now reading it from config.json
+        with open('./site-served-poc/odbc/config.json') as odbcTypes:
+            data = json.load(odbcTypes)
+            resourceList = data['resources']
+        for index in range(len(resourceList)):
+            if resourceName in resourceList[index]['name']:
+                sourceList = resourceList[index]
+                dialectString = self.getDBDialectString(
+                    sourceList['databaseProvider'])
+                dbConnectionString = dialectString + sourceList['credentials']['username'] + \
+                    ":" + sourceList['credentials']['password'] + "@"+sourceList['credentials']['hostname'] + \
+                    ":" + sourceList['credentials']['port'] + \
+                    "/"+sourceList['dbName']
+                return dbConnectionString
+
 
 obj = ODBC()
 # SQLite Set up a db before execute
@@ -100,15 +112,8 @@ obj = ODBC()
 # obj.pushToTarget("sqlite:///C:\\sqlite\\demo.db", "demo", "testing", "host",
 #                  "3306", "demo", "COMPANY", './site-served-poc/odbc/todb.csv')
 
-
 # My SQL
-obj.readFromSource("mysql", "manisoft", "Password1!", "db4free.net",
-                   "3306", "siteservedpoc", "employee", "./site-served-poc/odbc/fromdb.csv")
-obj.pushToTarget("mysql", "manisoft", "Password1!", "db4free.net",
-                 "3306", "siteservedpoc", "employee", "./site-served-poc/odbc/todb.csv")
-
-# Postgres SQL
-# obj.readFromSource("POSTGRESQL", "ckgwdcet", "Lcn_FsBNiyq3xgzp35UH5y4-sY4SwzbH", "raja.db.elephantsql.com",
-#                    "5432", "ckgwdcet", "COMPANY", "./site-served-poc/odbc/fromdb.csv")
-# obj.pushToTarget("POSTGRESQL", "ckgwdcet", "Lcn_FsBNiyq3xgzp35UH5y4-sY4SwzbH", "raja.db.elephantsql.com",
-#                  "5432", "ckgwdcet", "COMPANY", "./site-served-poc/odbc/todb.csv")
+obj.readFromSource("", "demo_mysql_odbc", "employee",
+                 "./site-served-poc/odbc/fromdb.csv")
+obj.pushToTarget("", "demo_mysql_odbc", "employee",
+                 "./site-served-poc/odbc/todb.csv")

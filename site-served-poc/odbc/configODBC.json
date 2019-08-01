@@ -1,14 +1,30 @@
-{
-  "type": "odbc",
-  "name": "mediaocean_odbc",
-  "isActive": true,
-  "databaseProvider":"MySql",  
-  "credentials": {
-    "username": "carat-reporting@denstu.com",
-    "password": "seabornuser!", 
-    "hostname":"",
-    "port":""
-   },
-   "dbName":"demo",   
-   "tableName": "ALL"
-}
+[
+  {
+    "type": "odbc",
+    "name": "demo_mysql_odbc",
+    "isActive": true,
+    "databaseProvider": "MySql",
+    "credentials": {
+      "username": "manisoft",
+      "password": "Password1!",
+      "hostname": "db4free.net",
+      "port": "3306"
+    },
+    "dbName": "siteservedpoc",
+    "tableName": "employee"
+  },
+  {
+    "type": "odbc",
+    "name": "demo_postgres_odbc",
+    "isActive": true,
+    "databaseProvider": "PostgresSql",
+    "credentials": {
+      "username": "ckgwdcet",
+      "password": "Lcn_FsBNiyq3xgzp35UH5y4-sY4SwzbH",
+      "hostname": "raja.db.elephantsql.com",
+      "port": "5432"
+    },
+    "dbName": "ckgwdcet",
+    "tableName": "COMPANY"
+  }
+]

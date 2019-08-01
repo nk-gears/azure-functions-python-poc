@@ -1,0 +1,167 @@
+{
+    "clientName": "Accumine",
+    "isActive": true,
+    "resources": [
+      {
+        "type": "azure-blob",
+        "name": "mediaocean-daily-siteserved-blob",
+        "isActive": true,
+        "credentials": {
+          "storageAccountName": "dentsu-reporting",
+          "accessKey": "322ed32d332d32d32r23c2dx232343443253512412"
+        }
+      },
+      {
+        "type": "ftp",
+        "name": "mediaocean-daily-siteserved-ftp",
+        "isActive": true,
+        "credentials": {
+          "host": "ftp.mediaocean.net",
+          "port": 21,
+          "username": "media-user",
+          "password": "seabornuser"
+        }
+      },
+      {
+        "type": "ftp",
+        "name": "prisma-weekly-siteserved-ftp",
+        "isActive": true,
+        "credentials": {
+          "host": "ftp.primsdata.net",
+          "port": 21,
+          "username": "prisma-user",
+          "password": "seabornuser!"
+        }
+      },
+      {
+        "type": "email",
+        "name": "carat-data-weekly-siteserved-email",
+        "isActive": true,
+        "credentials": {
+          "mail_server": "smtp.dentsu.com",
+          "username": "carat-reporting@denstu.com",
+          "password": "seabornuser!"
+        }
+      },
+      {
+        "type": "odbc",
+        "name": "demo_mysql_odbc",
+        "isActive": true,
+        "databaseProvider":"MySql",  
+        "credentials": {
+          "username": "manisoft",
+          "password": "Password1!", 
+          "hostname":"db4free.net",
+          "port":"3306"
+         },
+         "dbName":"siteservedpoc",   
+         "tableName": "employee"
+      }
+    ],
+    "etl_definitions": [
+      {
+        "name": "prisma-email-daily-data-blob-etl",
+        "source": {
+          "resourceName": "carat-data-weekly-siteserved-email",
+          "location": {
+            "subjectLine": "Reporting data for SiteServed",
+            "fromAddress": "system-user@dentsu.com",
+            "attachments": "reporting1/MMDDYY.zip",
+            "filename": "^$[DayReport/"
+          }
+        },
+        "targets": [
+          {
+            "resourceName": "prisma-weekly-siteserved-odbc",
+            "location": {
+              "tableName": "campaignsMaster"
+            }
+          },
+          {
+            "resourceName": "prisma-weekly-siteserved-ftp",
+            "location": {
+              "folderPath": "/daily-reports/YYYY-MM-DD/",
+              "filename": "${filename}",
+              "isCompressed": false
+            }
+          },
+          {
+            "resourceName": "mediaocean-daily-siteserved-blob",
+            "location": {
+              "containerName": "",
+              "folderPath": "/daily-reports/YYYY-MM-DD/",
+              "filename": "${filename}",
+              "isCompressed": false
+            }
+          }
+        ],
+        "mappings": {
+          "targetFields": [
+            {
+              "sourceFieldName": "campaignName",
+              "fieldName": "campaign_name",
+              "fieldPosition": 3
+            },
+            {
+              "sourceFieldName": "campaignBudget",
+              "fieldName": "campaign_budget",
+              "fieldPosition": 1
+            }
+          ],
+          "sourceFields": [
+            {
+              "fieldName": "campaignName",
+              "fieldType": "string",
+              "isRequired": true,
+              "skipInvalids": false,
+              "validations": [
+                {
+                  "rule": "VALID_TYPE"
+                },
+                {
+                  "rule": "MAX_LENGTH_EXCEED",
+                  "values": 200
+                },
+                {
+                  "rule": "HAS_VALUE"
+                },
+                {
+                  "rule": "ALLOWED_VALUES",
+                  "values": [
+                    "Completed",
+                    "In Progress"
+                  ]
+                }
+              ]
+            },
+            {
+              "fieldName": "campaignBudget",
+              "fieldType": "number",
+              "isRequired": true
+            }
+          ]
+        }
+      }
+    ],
+    "schedules": [
+      {
+        "etlName": "",
+        "scheduledAt": "",
+        "deliveryCadence": "",
+        "isActive": true,
+        "notifications": [
+          {
+            "type": "email",
+            "to": "alex@denstsu.com",
+            "subject": "",
+            "message": "",
+            "events": [
+              "SS_VALIDATION_FAILED",
+              "SS_SUCCESS",
+              "SS_FAILED"
+            ]
+          }
+        ]
+      }
+    ]
+  }
