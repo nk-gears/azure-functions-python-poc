@@ -11,6 +11,7 @@ class ODBC:
             dbConnectionString = self.getDBConnectionString(dbType)
             dbConnectionString = dbConnectionString + username + \
                 ":" + password + "@"+hostName + ":" + portNo+"/"+dbName
+            print(dbConnectionString)
             engine = db.create_engine(
                 dbConnectionString, encoding='utf-8', echo=False)
             return engine
@@ -31,7 +32,7 @@ class ODBC:
         except Exception as e:
             # log the exception
             # raise exception.StopETLException
-            pass         
+            pass        
         finally:
             engine.dispose()
 
@@ -83,7 +84,7 @@ class ODBC:
     # Get the DB dialect uri based on the db providers
     def getDBConnectionString(self, dbEngineProvider):
         try:
-            with open('./odbc/odbctypes.json') as odbcTypes:
+            with open('./site-served-poc/odbc/odbctypes.json') as odbcTypes:
                 data = json.load(odbcTypes)
                 return data[dbEngineProvider.upper()]
         except Exception as e:
@@ -92,22 +93,22 @@ class ODBC:
             pass
 
 
-obj = odbc()
+obj = ODBC()
 # SQLite Set up a db before execute
 # obj.readFromSource("Sqlite", "demo", "testing", "host",
-#                    "3306", "demo", "COMPANY", "./odbc/fromdb.csv")
+#                    "3306", "demo", "COMPANY", "./site-served-poc/odbc/fromdb.csv")
 # obj.pushToTarget("sqlite:///C:\\sqlite\\demo.db", "demo", "testing", "host",
-#                  "3306", "demo", "COMPANY", './odbc/todb.csv')
+#                  "3306", "demo", "COMPANY", './site-served-poc/odbc/todb.csv')
 
 
 # My SQL
 obj.readFromSource("mysql", "manisoft", "Password1!", "db4free.net",
-                   "3306", "siteservedpoc", "employee", "./odbc/fromdb.csv")
+                   "3306", "siteservedpoc", "employee", "./site-served-poc/odbc/fromdb.csv")
 obj.pushToTarget("mysql", "manisoft", "Password1!", "db4free.net",
-                 "3306", "siteservedpoc", "employee", "./odbc/todb.csv")
+                 "3306", "siteservedpoc", "employee", "./site-served-poc/odbc/todb.csv")
 
 # Postgres SQL
 # obj.readFromSource("POSTGRESQL", "ckgwdcet", "Lcn_FsBNiyq3xgzp35UH5y4-sY4SwzbH", "raja.db.elephantsql.com",
-#                    "5432", "ckgwdcet", "COMPANY", "./odbc/fromdb.csv")
+#                    "5432", "ckgwdcet", "COMPANY", "./site-served-poc/odbc/fromdb.csv")
 # obj.pushToTarget("POSTGRESQL", "ckgwdcet", "Lcn_FsBNiyq3xgzp35UH5y4-sY4SwzbH", "raja.db.elephantsql.com",
-#                  "5432", "ckgwdcet", "COMPANY", "./odbc/todb.csv")
+#                  "5432", "ckgwdcet", "COMPANY", "./site-served-poc/odbc/todb.csv")
