@@ -1,0 +1,7 @@
+{
+    "POSTGRESQL": "postgresql+psycopg2://",
+    "MYSQL": "mysql+pymysql://",
+    "MSSQL": "mssql+pyodbc://",
+    "ORACLE": "oracle+cx_oracle://",
+    "SQLITE": "sqlite:///"
+}

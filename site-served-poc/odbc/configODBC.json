@@ -1,0 +1,14 @@
+{
+  "type": "odbc",
+  "name": "mediaocean_odbc",
+  "isActive": true,
+  "databaseProvider":"MySql",  
+  "credentials": {
+    "username": "carat-reporting@denstu.com",
+    "password": "seabornuser!", 
+    "hostname":"",
+    "port":""
+   },
+   "dbName":"demo",   
+   "tableName": "ALL"
+}
