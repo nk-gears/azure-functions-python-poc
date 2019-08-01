@@ -28,7 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         except Exception as ex:
             return func.HttpResponse(f"Hello {name} {ex}")
         else:
-            return func.HttpResponse(f"Hello {name}{t} ")
+            return func.HttpResponse(f"Hello {name} {df[0]}  {t} ")
     else:
         return func.HttpResponse(
              "Please pass a name on the query string or in the request body",
