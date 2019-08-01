@@ -26,7 +26,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         try:
             from .. SharedCode import StopWatch
             with StopWatch() as sw:
-                df =  pd.read_csv(pd.compat.StringIO(((BlockBlobService(account_name=accountName,account_key=accountey)).get_blob_to_text(containerName,"creditcard.csv")).content),encoding='utf-8',error_bad_lines=False)
+                df =  pd.read_csv(pd.compat.StringIO(((BlockBlobService(account_name=accountName,account_key=accountey)).get_blob_to_text(containerName,"demodata.csv")).content),encoding='utf-8',error_bad_lines=False)
                 x=df.head()
                 t=("[*] Elapsed: {0:.2f}s".format(sw.elapsed_s))
                 
