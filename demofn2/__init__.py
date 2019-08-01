@@ -5,9 +5,7 @@ import azure.functions as func
 import pandas as pd
 #ls=["name","age"]
 #df=pd.DataFrame(ls)
-accountey="MkCyzS20s5n8LP5ukutsmNjdnenV6iVaAAJEDXc9xb3xWidAcfCpvhFiovAcdYCOReLkQjSzxb7w7D3W5wXq2Q=="
-accountName="scifunctionapp"
-containerName="democontainer"
+
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -24,16 +22,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if name:
         try:
-            from .. SharedCode import StopWatch
+            from .. Common import StopWatch
             with StopWatch() as sw:
-                df =  pd.read_csv(pd.compat.StringIO(((BlockBlobService(account_name=accountName,account_key=accountey)).get_blob_to_text(containerName,"demodata.csv")).content),encoding='utf-8',error_bad_lines=False)
-                x=df.head()
                 t=("[*] Elapsed: {0:.2f}s".format(sw.elapsed_s))
                 
         except Exception as ex:
             return func.HttpResponse(f"Hello {name} {ex}")
         else:
-            return func.HttpResponse(f"Hello {name} {x}  {t} ")
+            return func.HttpResponse(f"Hello {name}   {t} ")
     else:
         return func.HttpResponse(
              "Please pass a name on the query string or in the request body",

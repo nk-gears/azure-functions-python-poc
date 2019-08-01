@@ -5,5 +5,5 @@
     "azureFunctions.projectRuntime": "~2",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.preDeployTask": "func: pack",
-    "python.pythonPath": ".env/bin/python"
+    "python.pythonPath": "C:\\Users\\SHAKIR\\AppData\\Local\\Programs\\Python\\Python36-32\\python.exe"
 }
